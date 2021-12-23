@@ -4,9 +4,10 @@ const schemas = require('./schemas');
 module.exports = {
   components: {
     securitySchemes: {
-      bearerAuth: {
+      jwt: {
         type: 'http',
         scheme: 'bearer',
+        in: 'header',
         bearerFormat: 'JWT',
       },
     },

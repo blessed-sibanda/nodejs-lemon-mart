@@ -29,4 +29,13 @@ app.use('/v1/', v1Router);
 app.use('/v2/', v2Router);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(docs));
 
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: err.name + ': ' + err.message });
+  } else if (err) {
+    res.status(400).json({ error: err.name + ': ' + err.message });
+    console.log(err);
+  }
+});
+
 module.exports = app;
