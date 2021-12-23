@@ -1,6 +1,5 @@
 const { describe, it } = require('mocha');
 const expect = require('chai').expect;
-const assert = require('assert');
 
 const User = require('../../src/models/user.model');
 
@@ -11,6 +10,7 @@ describe('User', () => {
   beforeEach(() => {
     userData = {
       email: 'blessed@example.com',
+      password: '1234pass',
       name: {
         firstName: 'Blessed',
         lastName: 'Sibanda',
@@ -34,11 +34,66 @@ describe('User', () => {
     expect(error).to.be.undefined;
   });
 
+  it('has salt', () => {
+    expect(user.salt).to.not.be.undefined;
+  });
+
+  it('has a hashedPassword', () => {
+    expect(user.hashedPassword).to.not.be.undefined;
+  });
+
   it('has a fullName', () => {
     expect(user.fullName).to.eq('Blessed Sibanda');
     userData.name.middleName = 'Bladed';
     const user2 = new User(userData);
     expect(user2.fullName).to.eq('Blessed Bladed Sibanda');
+  });
+
+  describe('Email', () => {
+    it('is invalid if email missing', () => {
+      delete userData.email;
+      user = new User(userData);
+      let error = user.validateSync();
+      expect(error).to.exist;
+      expect(error.errors['email'].message).to.eq('Email is required');
+    });
+
+    it('is invalid if its not in the correct format', () => {
+      const invalidEmails = ['blah.blah', 'bla', 'blah@@'];
+      invalidEmails.forEach((email) => {
+        userData.email = email;
+        user = new User(userData);
+        let error = user.validateSync();
+        expect(error).to.exist;
+        expect(error.errors['email'].message).to.eq('Email address is invalid');
+      });
+    });
+  });
+
+  describe('Password', () => {
+    it('is invalid if password is missing', () => {
+      delete userData.password;
+      user = new User(userData);
+      let error = user.validateSync();
+      expect(error).to.exist;
+      expect(error.errors['hashedPassword'].message).to.eq('Password is required');
+    });
+
+    it('has a random salt', () => {
+      let u1 = new User(userData);
+      let u2 = new User(userData);
+      expect(u1.salt).to.not.eq(u2.salt);
+    });
+  });
+
+  describe('authenticate', () => {
+    it('returns true if password is correct', () => {
+      expect(user.authenticate(userData.password)).to.be.true;
+    });
+
+    it('returns false if password is incorrect', () => {
+      expect(user.authenticate('cat')).to.be.false;
+    });
   });
 
   describe('Name', () => {

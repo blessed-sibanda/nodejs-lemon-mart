@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const nameSchema = {
   firstName: {
@@ -57,7 +58,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
       trim: true,
+      unique: true,
       required: [true, 'Email is required'],
+      match: [/.+\@.+\..+/, 'Email address is invalid'],
     },
     name: nameSchema,
     address: addressSchema,
@@ -76,6 +79,11 @@ const userSchema = new mongoose.Schema(
       },
     },
     phones: [phoneSchema],
+    salt: String,
+    hashedPassword: {
+      type: String,
+      required: 'Password is required',
+    },
   },
   { timestamps: true },
 );
@@ -86,5 +94,27 @@ userSchema.virtual('fullName').get(function () {
   }
   return `${this.name.firstName} ${this.name.lastName}`;
 });
+
+userSchema.virtual('password').set(function (password) {
+  this.salt = this.makeSalt();
+  this.hashedPassword = this.encryptPassword(password);
+});
+
+userSchema.methods = {
+  encryptPassword: function (password) {
+    if (!password) return '';
+    try {
+      return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+    } catch (err) {
+      return '';
+    }
+  },
+  makeSalt: function () {
+    return Math.round(new Date().valueOf() * Math.random()) + '';
+  },
+  authenticate: function (plainText) {
+    return this.encryptPassword(plainText) === this.hashedPassword;
+  },
+};
 
 module.exports = mongoose.model('User', userSchema);
