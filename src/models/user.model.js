@@ -95,9 +95,21 @@ userSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.lastName}`;
 });
 
-userSchema.virtual('password').set(function (password) {
-  this.salt = this.makeSalt();
-  this.hashedPassword = this.encryptPassword(password);
+userSchema
+  .virtual('password')
+  .set(function (password) {
+    this._password = password;
+    this.salt = this.makeSalt();
+    this.hashedPassword = this.encryptPassword(password);
+  })
+  .get(function () {
+    return this._password;
+  });
+
+userSchema.path('hashedPassword').validate(function (v) {
+  if (this._password && this._password.length < 6) {
+    this.invalidate('password', 'Password must be at least 6 characters.');
+  }
 });
 
 userSchema.methods = {

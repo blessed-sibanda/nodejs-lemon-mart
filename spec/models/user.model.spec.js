@@ -84,6 +84,16 @@ describe('User', () => {
       let u2 = new User(userData);
       expect(u1.salt).to.not.eq(u2.salt);
     });
+
+    it('is invalid if its shorter than 6 characters', () => {
+      userData.password = '12345';
+      user = new User(userData);
+      let error = user.validateSync();
+      expect(error).to.exist;
+      expect(error.errors['password'].message).to.eq(
+        'Password must be at least 6 characters.',
+      );
+    });
   });
 
   describe('authenticate', () => {
