@@ -2,12 +2,19 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const swaggerUi = require('swagger-ui-express');
-const docs = require('./docs');
-const cors = require('cors');
-
+var swaggerUi = require('swagger-ui-express');
+var docs = require('./docs');
+var cors = require('cors');
+var mongoose = require('mongoose');
 var v1Router = require('./src/routes/v1');
 var v2Router = require('./src/routes/v2');
+var config = require('./config');
+
+mongoose.connect(config.mongoUri);
+
+mongoose.connection.on('error', () => {
+  throw new Error(`unable to connect to database: ${config.mongoUri}`);
+});
 
 var app = express();
 

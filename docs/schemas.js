@@ -12,7 +12,7 @@ module.exports = {
     },
     PhoneType: {
       type: 'string',
-      enum: ['none', 'mobile', 'home', 'work'],
+      enum: ['mobile', 'home', 'work'],
     },
     Phone: {
       type: 'object',
@@ -46,7 +46,8 @@ module.exports = {
             line2: { type: 'string' },
             city: { type: 'string', required: true },
             state: { type: 'string', required: true },
-            zip: { type: 'string', required: true },
+            zip: { type: 'string' },
+            country: { type: 'string', required: true },
           },
         },
         phones: {
