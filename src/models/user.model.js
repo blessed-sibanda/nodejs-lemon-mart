@@ -80,6 +80,10 @@ const userSchema = new mongoose.Schema(
     },
     phones: [phoneSchema],
     salt: String,
+    picture: {
+      type: String,
+      default: '',
+    },
     hashedPassword: {
       type: String,
       required: 'Password is required',

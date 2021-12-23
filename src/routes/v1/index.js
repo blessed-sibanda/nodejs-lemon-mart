@@ -1,5 +1,8 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const authRoutes = require('./auth');
+
+router.use(authRoutes);
 
 router.get('/', function (req, res, next) {
   res.json({ message: 'Welcome to LemonMart API v1' });

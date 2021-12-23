@@ -70,6 +70,13 @@ describe('User', () => {
     });
   });
 
+  describe('Picture', () => {
+    it("has a default value of ''", () => {
+      user = new User(userData);
+      expect(user.picture).to.eql('');
+    });
+  });
+
   describe('Password', () => {
     it('is invalid if password is missing', () => {
       delete userData.password;
