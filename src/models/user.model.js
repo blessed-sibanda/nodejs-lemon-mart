@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
+const merge = require('lodash/merge');
+const {
+  removeUndefinedFields,
+  InvalidParamKeyError,
+  InvalidSortFieldError,
+} = require('../utils');
+const debug = require('debug')('lemon-mart-server:user-model');
 
 const nameSchema = {
   firstName: {
@@ -137,6 +144,76 @@ userSchema.methods = {
   authenticate: function (plainText) {
     return this.encryptPassword(plainText) === this.hashedPassword;
   },
+};
+
+const nestedFields = [
+  'firstName',
+  'lastName',
+  'middleName',
+  'address',
+  'city',
+  'state',
+  'country',
+];
+
+userSchema.statics.filterFields = [...nestedFields, 'email', 'role'];
+
+userSchema.statics.normalizeObject = function (object) {
+  let queryFields = [...this.filterFields, 'sort'];
+  Object.keys(object).forEach((key) => {
+    if (!queryFields.includes(key)) {
+      throw new InvalidParamKeyError(key, this.filterFields);
+    }
+  });
+
+  let userData = {
+    'name.firstName': object['firstName'],
+    'name.middleName': object['middleName'],
+    'name.lastName': object['lastName'],
+    'address.line1': object['address'],
+    'address.line2': object['address'],
+    'address.city': object['city'],
+    'address.country': object['country'],
+    'address.state': object['state'],
+  };
+
+  nestedFields.forEach((field) => delete object[field]);
+  let normalizedObject = merge(removeUndefinedFields(userData), object);
+
+  return normalizedObject;
+};
+
+userSchema.statics.queryParams = function (object) {
+  let normalizedObject = this.normalizeObject(object);
+  const filters = {};
+  Object.keys(normalizedObject).forEach((field) => {
+    filters[field] = { $regex: normalizedObject[field], $options: 'i' };
+  });
+  return filters;
+};
+
+userSchema.statics.lookUpNested = {
+  firstName: 'name.firstName',
+  middleName: 'name.middleName',
+  lastName: 'name.lastName',
+  address: 'address.line1',
+  city: 'address.city',
+  country: 'address.country',
+  state: 'address.state',
+};
+
+userSchema.statics.sortFields = function (sortKey = '') {
+  if (sortKey.length == 0) return [];
+  let sortObj = {};
+  sortKey.split(',').forEach((key) => {
+    let newKey = key.startsWith('-') ? key.split('').splice(1).join('') : key;
+    if (!this.filterFields.includes(newKey))
+      throw new InvalidSortFieldError(newKey, this.filterFields);
+    if (nestedFields.includes(newKey)) newKey = this.lookUpNested[newKey];
+    sortObj[newKey] = key.startsWith('-') ? -1 : 1;
+  });
+
+  return Object.keys(sortObj).map((key) => [key, sortObj[key]]);
 };
 
 module.exports = mongoose.model('User', userSchema);

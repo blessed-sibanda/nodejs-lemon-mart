@@ -1,3 +1,5 @@
+const debug = require('debug')('lemon-mart-server:exceptions');
+
 /**
  * Abstract class 'LemonMartError'
  */
@@ -19,22 +21,22 @@ class LemonMartError extends Error {
 
 class InvalidParamKeyError extends LemonMartError {
   constructor(invalidKey, allowedKeys) {
-    this.name = 'InvalidParamKeyError';
-    super(`${this.name}: '${this.invalidKey}' is not a valid param key`);
+    super(`'${invalidKey}' is not a valid param key`);
+    this.allowedKeys = allowedKeys;
   }
 
   toJson() {
     return {
       message: this.message,
-      help: `The allowed filter keys are: '${this.allowedkeys}'`,
+      help: `The allowed filter params are: '${this.allowedKeys}'`,
     };
   }
 }
 
 class InvalidSortFieldError extends LemonMartError {
   constructor(sortField, allowedFields) {
-    this.name = 'InvalidSortFieldError';
-    super(`${this.name}: '${this.sortField}' is not a valid sort field`);
+    super(`'${sortField}' is not a valid sort field`);
+    this.allowedFields = allowedFields;
   }
 
   toJson() {

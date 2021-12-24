@@ -8,7 +8,10 @@ describe('ErrorUtil::formatError', () => {
   describe('Non-Validation errors', () => {
     it('returns error message', () => {
       let error = new Error('some message');
-      expect(formatError(error)).to.eql({ message: 'some message' });
+      let expected = {
+        error: { message: 'some message' },
+      };
+      expect(formatError(error)).to.eql(expected);
     });
   });
 
@@ -20,20 +23,22 @@ describe('ErrorUtil::formatError', () => {
         let user = new User();
         let error = user.validateSync();
         let expectedResult = {
-          message: 'User validation failed',
-          errors: {
-            hashedPassword: 'Password is required',
-            address: {
-              country: 'Country is required',
-              state: 'State/Province is required',
-              city: 'City is required',
-              line1: 'Address line1 is required',
+          error: {
+            message: 'User validation failed',
+            errors: {
+              hashedPassword: 'Password is required',
+              address: {
+                country: 'Country is required',
+                state: 'State/Province is required',
+                city: 'City is required',
+                line1: 'Address line1 is required',
+              },
+              name: {
+                lastName: 'Last Name is required',
+                firstName: 'First Name is required',
+              },
+              email: 'Email is required',
             },
-            name: {
-              lastName: 'Last Name is required',
-              firstName: 'First Name is required',
-            },
-            email: 'Email is required',
           },
         };
         expect(formatError(error)).to.deep.eq(expectedResult);
@@ -45,19 +50,21 @@ describe('ErrorUtil::formatError', () => {
         let user = new User({ name: { firstName: 'Blessed' } });
         let error = user.validateSync();
         let expectedResult = {
-          message: 'User validation failed',
-          errors: {
-            hashedPassword: 'Password is required',
-            address: {
-              country: 'Country is required',
-              state: 'State/Province is required',
-              city: 'City is required',
-              line1: 'Address line1 is required',
+          error: {
+            message: 'User validation failed',
+            errors: {
+              hashedPassword: 'Password is required',
+              address: {
+                country: 'Country is required',
+                state: 'State/Province is required',
+                city: 'City is required',
+                line1: 'Address line1 is required',
+              },
+              name: {
+                lastName: 'Last Name is required',
+              },
+              email: 'Email is required',
             },
-            name: {
-              lastName: 'Last Name is required',
-            },
-            email: 'Email is required',
           },
         };
         expect(formatError(error)).to.deep.eq(expectedResult);
@@ -72,17 +79,18 @@ describe('ErrorUtil::formatError', () => {
         });
         let error = user.validateSync();
         let expectedResult = {
-          message: 'User validation failed',
-          errors: {
-            hashedPassword: 'Password is required',
-            address: {
-              country: 'Country is required',
-              state: 'State/Province is required',
-              city: 'City is required',
-              line1: 'Address line1 is required',
+          error: {
+            message: 'User validation failed',
+            errors: {
+              hashedPassword: 'Password is required',
+              address: {
+                country: 'Country is required',
+                state: 'State/Province is required',
+                city: 'City is required',
+                line1: 'Address line1 is required',
+              },
+              email: 'Email address is invalid',
             },
-
-            email: 'Email address is invalid',
           },
         };
         expect(formatError(error)).to.deep.eq(expectedResult);
@@ -104,9 +112,11 @@ describe('ErrorUtil::formatError', () => {
         });
         let error = user.validateSync();
         let expectedResult = {
-          message: 'User validation failed',
-          errors: {
-            password: 'Password must be at least 6 characters.',
+          error: {
+            message: 'User validation failed',
+            errors: {
+              password: 'Password must be at least 6 characters.',
+            },
           },
         };
         expect(formatError(error)).to.deep.eq(expectedResult);

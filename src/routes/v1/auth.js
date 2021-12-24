@@ -1,7 +1,7 @@
 const config = require('../../../config');
 const { Router } = require('express');
-const User = require('../../models/user.model');
-const { requireSignIn } = require('../../middleware/auth.middleware');
+const User = require('../../models');
+const { requireSignIn } = require('../middleware');
 const { authService } = require('../../services');
 const { formatError } = require('../../utils');
 
