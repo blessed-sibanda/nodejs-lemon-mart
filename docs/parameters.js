@@ -1,45 +1,39 @@
+const { User } = require('../src/models');
+
+let usersFilterParams = {};
+User.filterFields.forEach((field) => {
+  usersFilterParams[`${field}FilterParam`] = {
+    in: 'query',
+    name: field,
+    required: false,
+    schema: {
+      type: 'string',
+    },
+    description: `${field} filter param`,
+  };
+});
+
 module.exports = {
   parameters: {
-    filterParam: {
-      in: 'query',
-      name: 'filter',
-      required: false,
-      schema: {
-        type: 'string',
-      },
-      description: 'Search text to filter the result set by',
-    },
-    skipParam: {
-      in: 'query',
-      name: 'skip',
-      required: false,
-      schema: {
-        type: 'integer',
-        minimum: 0,
-      },
-      description: 'The number of items to skip before collecting the result set',
-    },
-    limitParam: {
-      in: 'query',
-      name: 'limit',
-      required: false,
-      schema: {
-        type: 'integer',
-        minimum: 0,
-        maximum: 50,
-        default: 10,
-      },
-      description: 'The number of items to return',
-    },
+    ...usersFilterParams,
     sortParam: {
       in: 'query',
-      name: 'sortKey',
+      name: 'sort',
       required: false,
       schema: {
         type: 'string',
       },
       description:
-        'Name of column to sort ascending. Prepend column name with a dash to sort descending',
+        'Name of columns (separated by commas) to sort ascending. Prepend column name with a dash to sort descending',
+    },
+    pageParam: {
+      in: 'query',
+      name: 'page',
+      required: false,
+      schema: {
+        type: 'integer',
+      },
+      description: 'Page number',
     },
   },
 };

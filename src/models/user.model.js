@@ -157,8 +157,12 @@ const nestedFields = [
   'country',
 ];
 
+const allowedFilterFields = [...nestedFields, 'email', 'role'];
+
+userSchema.statics.filterFields = allowedFilterFields;
+
 userSchema.statics.perPage = 15;
-userSchema.statics.allowedParams = [...nestedFields, 'email', 'role', 'page'];
+userSchema.statics.allowedParams = [...allowedFilterFields, 'page'];
 
 userSchema.statics.normalizeObject = function (object) {
   let queryFields = [...this.allowedParams, 'sort'];
