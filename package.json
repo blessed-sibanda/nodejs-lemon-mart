@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "DEBUG=lemon-mart-server:* nodemon ./bin/www",
-    "test": "npx mocha './spec/**/*spec.js'"
+    "test": "npx mocha './spec/**/*spec.js'",
+    "db:seed": "node ./src/utils/seed-db.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -13,6 +14,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-jwt": "^6.1.0",
+    "faker": "^5.5.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.1.3",

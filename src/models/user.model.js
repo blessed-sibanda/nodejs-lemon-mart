@@ -52,45 +52,44 @@ const phoneSchema = {
   },
 };
 
-const userSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      lowercase: true,
-      trim: true,
-      unique: true,
-      required: [true, 'Email is required'],
-      match: [/.+\@.+\..+/, 'Email address is invalid'],
-    },
-    name: nameSchema,
-    address: addressSchema,
-    userStatus: Boolean,
-    level: {
-      type: Number,
-      default: 0,
-    },
-    dateOfBirth: Date,
-    role: {
-      type: String,
-      default: 'none',
-      enum: {
-        values: ['none', 'cashier', 'clerk', 'manager'],
-        message: '{VALUE} is not a valid role',
-      },
-    },
-    phones: [phoneSchema],
-    salt: String,
-    picture: {
-      type: String,
-      default: '',
-    },
-    hashedPassword: {
-      type: String,
-      required: 'Password is required',
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    lowercase: true,
+    trim: true,
+    unique: true,
+    required: [true, 'Email is required'],
+    match: [/.+\@.+\..+/, 'Email address is invalid'],
+  },
+  name: nameSchema,
+  address: addressSchema,
+  userStatus: Boolean,
+  level: {
+    type: Number,
+    default: 0,
+  },
+  dateOfBirth: Date,
+  role: {
+    type: String,
+    default: 'none',
+    enum: {
+      values: ['none', 'cashier', 'clerk', 'manager'],
+      message: '{VALUE} is not a valid role',
     },
   },
-  { timestamps: true },
-);
+  phones: [phoneSchema],
+  salt: String,
+  picture: {
+    type: String,
+    default: '',
+  },
+  hashedPassword: {
+    type: String,
+    required: 'Password is required',
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
 userSchema.virtual('fullName').get(function () {
   if (this.name.middleName && this.name.middleName != '') {

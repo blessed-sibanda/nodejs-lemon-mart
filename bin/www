@@ -9,15 +9,12 @@ var debug = require('debug')('lemon-mart-server:server');
 var http = require('http');
 var mongoose = require('mongoose');
 var config = require('../config');
+var { connectDb } = require('../src/utils/db.js');
 
 /**
  * Connect to database
  */
-mongoose.connect(config.mongoUri);
-
-mongoose.connection.on('error', () => {
-  throw new Error(`unable to connect to database: ${config.mongoUri}`);
-});
+connectDb(config.mongoUri);
 
 /**
  * Get port from environment and store in Express.
