@@ -1,4 +1,5 @@
 const { Error } = require('mongoose');
+const { LemonMartError } = require('./exceptions');
 
 function getValidationErrors(error) {
   let errors = error.errors;
@@ -39,12 +40,18 @@ function getValidationErrors(error) {
 
 module.exports = {
   formatError: (error) => {
+    let formattedError;
     if (error instanceof Error.ValidationError)
-      return { message: error._message, errors: getValidationErrors(error) };
+      formattedError = {
+        message: error._message,
+        errors: getValidationErrors(error),
+      };
     else if (error instanceof Error.CastError)
-      return { message: 'Invalid ObjectId' };
+      formattedError = { message: 'Invalid ObjectId' };
+    else if (error instanceof LemonMartError) formattedError = error.toJson();
     else {
-      return { message: error.message || error };
+      formattedError = { message: error.message || error };
     }
+    return { error: formattedError };
   },
 };

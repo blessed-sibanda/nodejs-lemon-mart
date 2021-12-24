@@ -1,14 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const merge = require('lodash/merge');
-const User = require('../../models/user.model');
-const { formatError } = require('../../utils/error-util');
-const {
-  requireSignIn,
-  IsProfileOwner,
-} = require('../../middleware/auth.middleware');
-const { userById } = require('../../middleware/user.middleware');
-var debug = require('debug')('lemon-mart-server:users-route');
+const { Router } = require('express');
+const { User } = require('../../models');
+const { formatError } = require('../../utils');
+const { userById, requireSignIn, IsProfileOwner } = require('../../middleware');
+const debug = require('debug')('lemon-mart-server:users-route');
+const { userService } = require('../../services');
+
+const router = Router();
 
 router.get('/', requireSignIn, async (req, res) => {
   const allowedFilters = [
@@ -20,7 +17,6 @@ router.get('/', requireSignIn, async (req, res) => {
     'country',
   ];
   const allowedQueryParams = [...allowedFilters, 'sort'];
-  debug(req.query);
   let invalidKey;
   Object.keys(req.query).forEach((key) => {
     if (!allowedQueryParams.includes(key)) {
@@ -147,11 +143,10 @@ router.get('/', requireSignIn, async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    user = new User(req.body);
-    await user.save();
+    let user = await User.create(req.body);
     res.json(user);
   } catch (err) {
-    res.status(400).json({ error: formatError(err) });
+    res.status(400).json(formatError(err));
   }
 });
 
@@ -164,18 +159,10 @@ router
   })
   .put(requireSignIn, IsProfileOwner, async (req, res) => {
     try {
-      let user = req.profile;
-
-      // un-editable fields
-      delete req.body._id;
-      delete req.body.hashedPassword;
-      delete req.body.salt;
-
-      user = merge(user, req.body);
-      await user.save();
+      let user = await userService.updateUser(req.profile, req.body);
       res.json(user);
     } catch (err) {
-      res.status(400).json({ error: formatError(err) });
+      res.status(400).json(formatError(err));
     }
   });
 

@@ -60,6 +60,13 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: [true, 'Email is required'],
     match: [/.+\@.+\..+/, 'Email address is invalid'],
+    validate: {
+      validator: async function (v) {
+        let users = await mongoose.model('User', userSchema).find({ email: v });
+        return users.length == 0;
+      },
+      message: (props) => 'Email address has been taken',
+    },
   },
   name: nameSchema,
   address: addressSchema,
