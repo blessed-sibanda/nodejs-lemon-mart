@@ -5,8 +5,8 @@ const { InvalidSortFieldError, InvalidParamKeyError } = require('../utils');
 const debug = require('debug')('lemon-mart-server:user-service');
 
 module.exports.findUsers = async (params) => {
-  let filters = User.queryParams(params);
-  let sortArr = User.sortFields(params['sort']);
+  let filters = User.normalizedFilterParams(params);
+  let sortArr = User.normalizedSortFields(params['sort']);
 
   if (sortArr.length != 0) {
     if (Object.keys(filters).length == 0)

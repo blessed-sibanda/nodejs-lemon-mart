@@ -183,7 +183,7 @@ userSchema.statics.normalizeObject = function (object) {
   return normalizedObject;
 };
 
-userSchema.statics.queryParams = function (object) {
+userSchema.statics.normalizedFilterParams = function (object) {
   let normalizedObject = this.normalizeObject(object);
   const filters = {};
   Object.keys(normalizedObject).forEach((field) => {
@@ -202,7 +202,7 @@ userSchema.statics.lookUpNested = {
   state: 'address.state',
 };
 
-userSchema.statics.sortFields = function (sortKey = '') {
+userSchema.statics.normalizedSortFields = function (sortKey = '') {
   if (sortKey.length == 0) return [];
   let sortObj = {};
   sortKey.split(',').forEach((key) => {

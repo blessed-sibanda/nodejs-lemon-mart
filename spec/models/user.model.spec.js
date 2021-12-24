@@ -238,6 +238,7 @@ describe('User', () => {
         address: '123 Main St',
         city: 'Gweru',
         email: 'blessed@example.com',
+        state: 'Midlands',
       };
       let expected = {
         email: queryParams['email'],
@@ -246,6 +247,7 @@ describe('User', () => {
         'address.line1': queryParams['address'],
         'address.line2': queryParams['address'],
         'address.city': queryParams['city'],
+        'address.state': queryParams['state'],
       };
       expect(User.normalizeObject(queryParams)).to.eql(expected);
     });
@@ -262,8 +264,8 @@ describe('User', () => {
     });
   });
 
-  describe('User#queryParams()', () => {
-    it('returns filter params', () => {
+  describe('User#normalizedFilterParams()', () => {
+    it('returns normalized filter params', () => {
       let queryObj = {
         firstName: 'Bl',
         role: 'clerk',
@@ -274,7 +276,7 @@ describe('User', () => {
         role: { $regex: 'clerk', $options: 'i' },
         email: { $regex: 'gmail', $options: 'i' },
       };
-      expect(User.queryParams(queryObj)).to.eql(expected);
+      expect(User.normalizedFilterParams(queryObj)).to.eql(expected);
     });
 
     it('throws "InvalidParamKeyError" error if invalid params are given', () => {
@@ -286,12 +288,12 @@ describe('User', () => {
       };
 
       expect(function () {
-        User.normalizeObject(queryObj);
+        User.normalizedFilterParams(queryObj);
       }).to.throw(InvalidParamKeyError);
     });
   });
 
-  describe('User#sortFields()', () => {
+  describe('User#normalizedSortFields()', () => {
     it('returns an array of sort fields', () => {
       let sortKey = 'email,middleName,-lastName,-role,city';
       let expected = [
@@ -301,20 +303,20 @@ describe('User', () => {
         ['role', -1],
         ['address.city', 1],
       ];
-      expect(User.sortFields(sortKey)).to.eql(expected);
+      expect(User.normalizedSortFields(sortKey)).to.eql(expected);
     });
 
     it('returns an empty array for an empty sort key', () => {
       let sortKey = '';
       let expected = [];
-      expect(User.sortFields(sortKey)).to.eql(expected);
+      expect(User.normalizedSortFields(sortKey)).to.eql(expected);
     });
 
     it('throws "InvalidSortKeyError" error if invalid params are given', () => {
       let sortKey = 'email,unknown,city';
 
       expect(function () {
-        User.sortFields(sortKey);
+        User.normalizedSortFields(sortKey);
       }).to.throw(InvalidSortFieldError);
     });
   });
