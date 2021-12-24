@@ -1,3 +1,12 @@
+const { User } = require('../../src/models');
+
+let filterParamReferences = [];
+User.filterFields.forEach((field) => {
+  filterParamReferences.push({
+    $ref: `#/components/parameters/${field}FilterParam`,
+  });
+});
+
 module.exports = {
   '/v2/users': {
     post: {
@@ -27,10 +36,9 @@ module.exports = {
       description:
         'Searches, sorts, paginates and returns a summary of `User` objects',
       parameters: [
-        { $ref: '#/components/parameters/filterParam' },
-        { $ref: '#/components/parameters/skipParam' },
-        { $ref: '#/components/parameters/limitParam' },
+        ...filterParamReferences,
         { $ref: '#/components/parameters/sortParam' },
+        { $ref: '#/components/parameters/pageParam' },
       ],
       responses: {
         200: {
