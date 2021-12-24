@@ -39,7 +39,6 @@ function getValidationErrors(error) {
 
 module.exports = {
   formatError: (error) => {
-    console.log(error);
     if (error instanceof Error.ValidationError)
       return { message: error._message, errors: getValidationErrors(error) };
     else if (error instanceof Error.CastError)

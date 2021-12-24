@@ -8,8 +8,23 @@ const {
   IsProfileOwner,
 } = require('../../middleware/auth.middleware');
 const { userById } = require('../../middleware/user.middleware');
+var debug = require('debug')('lemon-mart-server:users-route');
 
 router.get('/', requireSignIn, async (req, res) => {
+  const allowedFilters = ['firstName', 'lastName', 'middleName'];
+  const allowedQueryParams = [...allowedFilters, 'sortKey'];
+  debug(req.query);
+  let invalidKey;
+  Object.keys(req.query).forEach((key) => {
+    if (!allowedQueryParams.includes(key)) {
+      invalidKey = key;
+    }
+  });
+  if (invalidKey)
+    return res.status(404).json({
+      error: `'${invalidKey}' is not a valid filter param.`,
+      help: `The allowed filter params are: '${allowedFilters}'`,
+    });
   try {
     let firstNameFilter = req.query['firstName'];
     if (firstNameFilter instanceof Array)
@@ -38,13 +53,32 @@ router.get('/', requireSignIn, async (req, res) => {
       });
     }
 
+    let sortKey = req.query['sortKey'];
+    let sortOrder;
+    let sortBy;
+
+    if (sortKey) {
+      sortOrder = sortKey.startsWith('-') ? -1 : 1;
+      sortBy = sortOrder == 1 ? sortKey : sortKey.split('').splice(1).join('');
+    }
+
     let users;
-    if (filters.length == 0) {
-      users = await User.find();
+    if (sortKey) {
+      if (filters.length == 0) {
+        users = await User.find({}).sort([[sortBy, sortOrder]]);
+      } else {
+        users = await User.find({
+          $or: filters,
+        }).sort([[sortBy, sortOrder]]);
+      }
     } else {
-      users = await User.find({
-        $or: filters,
-      });
+      if (filters.length == 0) {
+        users = await User.find();
+      } else {
+        users = await User.find({
+          $or: filters,
+        });
+      }
     }
 
     res.json(users);
