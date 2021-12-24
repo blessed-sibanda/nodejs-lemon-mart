@@ -1,8 +1,11 @@
 const { describe, it } = require('mocha');
 const expect = require('chai').expect;
 
-const { User } = require('../../src/models');
-const { InvalidParamKeyError, InvalidSortFieldError } = require('../../src/utils');
+const { User } = require('../../../src/models');
+const {
+  InvalidParamKeyError,
+  InvalidSortFieldError,
+} = require('../../../src/utils');
 
 describe('User', () => {
   let user;

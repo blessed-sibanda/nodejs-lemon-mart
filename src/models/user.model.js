@@ -157,6 +157,7 @@ const nestedFields = [
   'country',
 ];
 
+userSchema.statics.perPage = 15;
 userSchema.statics.allowedParams = [...nestedFields, 'email', 'role', 'page'];
 
 userSchema.statics.normalizeObject = function (object) {

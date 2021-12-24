@@ -1,6 +1,7 @@
 const db = require('./db');
 const exceptions = require('./exceptions');
 const errorUtil = require('./error-util');
+const seedDb = require('./seed-db');
 
 const removeUndefinedFields = (obj) => {
   let newObj = {};
@@ -11,4 +12,10 @@ const removeUndefinedFields = (obj) => {
   return newObj;
 };
 
-module.exports = { ...db, ...exceptions, ...errorUtil, removeUndefinedFields };
+module.exports = {
+  ...db,
+  ...exceptions,
+  ...errorUtil,
+  removeUndefinedFields,
+  ...seedDb,
+};

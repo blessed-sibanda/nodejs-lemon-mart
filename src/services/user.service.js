@@ -10,7 +10,8 @@ module.exports.findUsers = async (params) => {
 
   let paginationOptions = {
     page: params['page'] || 1,
-    limit: 15,
+    limit: User.perPage,
+    select: '-hashedPassword -salt -__v',
   };
 
   if (sortArr.length != 0) {

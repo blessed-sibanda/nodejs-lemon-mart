@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha');
 const expect = require('chai').expect;
-const { formatError } = require('../../src/utils/error-util');
-const User = require('../../src/models/user.model');
+const { formatError } = require('../../../src/utils/error-util');
+const User = require('../../../src/models/user.model');
 const { Error, Types } = require('mongoose');
 
 describe('ErrorUtil::formatError', () => {

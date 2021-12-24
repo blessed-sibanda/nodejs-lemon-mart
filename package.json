@@ -5,8 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "DEBUG=lemon-mart-server:* nodemon ./bin/www",
-    "test": "npx mocha './spec/**/*spec.js'",
-    "db:seed": "node ./src/utils/seed-db.js"
+    "test": "npx mocha './tests/**/*test.js' --exit",
+    "test:unit": "npx mocha './tests/unit/**/*test.js' --exit",
+    "test:integration": "npx mocha './tests/integration/**/*test.js' --exit"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -24,7 +25,9 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
     "mocha": "^9.1.3",
+    "mongodb-memory-server": "^8.1.0",
     "nodemon": "^2.0.15"
   }
 }
