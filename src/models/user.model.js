@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 const crypto = require('crypto');
 const merge = require('lodash/merge');
 const {
@@ -156,13 +157,13 @@ const nestedFields = [
   'country',
 ];
 
-userSchema.statics.filterFields = [...nestedFields, 'email', 'role'];
+userSchema.statics.allowedParams = [...nestedFields, 'email', 'role', 'page'];
 
 userSchema.statics.normalizeObject = function (object) {
-  let queryFields = [...this.filterFields, 'sort'];
+  let queryFields = [...this.allowedParams, 'sort'];
   Object.keys(object).forEach((key) => {
     if (!queryFields.includes(key)) {
-      throw new InvalidParamKeyError(key, this.filterFields);
+      throw new InvalidParamKeyError(key, this.allowedParams);
     }
   });
 
@@ -207,13 +208,15 @@ userSchema.statics.normalizedSortFields = function (sortKey = '') {
   let sortObj = {};
   sortKey.split(',').forEach((key) => {
     let newKey = key.startsWith('-') ? key.split('').splice(1).join('') : key;
-    if (!this.filterFields.includes(newKey))
-      throw new InvalidSortFieldError(newKey, this.filterFields);
+    if (!this.allowedParams.includes(newKey))
+      throw new InvalidSortFieldError(newKey, this.allowedParams);
     if (nestedFields.includes(newKey)) newKey = this.lookUpNested[newKey];
     sortObj[newKey] = key.startsWith('-') ? -1 : 1;
   });
 
   return Object.keys(sortObj).map((key) => [key, sortObj[key]]);
 };
+
+userSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('User', userSchema);

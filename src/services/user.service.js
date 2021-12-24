@@ -8,18 +8,24 @@ module.exports.findUsers = async (params) => {
   let filters = User.normalizedFilterParams(params);
   let sortArr = User.normalizedSortFields(params['sort']);
 
+  let paginationOptions = {
+    page: params['page'] || 1,
+    limit: 15,
+  };
+
   if (sortArr.length != 0) {
     if (Object.keys(filters).length == 0)
-      return await User.find({}).sort([[sortBy, sortOrder]]);
-    else {
-      return await User.find(filters).sort(sortArr);
-    }
+      return await User.paginate({}, { sort: sortArr, ...paginationOptions });
+    else
+      return await User.paginate(filters, { sort: sortArr, ...paginationOptions });
   } else {
     if (Object.keys(filters).length == 0)
-      return await User.find().sort('-createdAt');
-    else {
-      return await User.find(filters).sort('-createdAt');
-    }
+      return await User.paginate({}, { sort: '-createdAt', ...paginationOptions });
+    else
+      return await User.paginate(filters, {
+        sort: '-createdAt',
+        ...paginationOptions,
+      });
   }
 };
 

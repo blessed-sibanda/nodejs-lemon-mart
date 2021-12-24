@@ -9,9 +9,21 @@ const router = Router();
 
 router.get('/', requireSignIn, async (req, res) => {
   try {
-    debug(req.query);
-    let users = await userService.findUsers(req.query);
-    res.json(users);
+    let result = await userService.findUsers(req.query);
+    res.json({
+      meta: {
+        page: result.page,
+        perPage: result.limit,
+        totalPages: result.totalPages,
+        hasNextPage: result.hasNextPage,
+        nextPage: result.nextPage,
+        hasPrevPage: result.hasPrevPage,
+        prevPage: result.prevPage,
+        totalCount: result.totalDocs,
+        total: result.docs.length,
+      },
+      data: result.docs,
+    });
   } catch (err) {
     res.status(err.statusCode || 400).json(formatError(err));
   }
