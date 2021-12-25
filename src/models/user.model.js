@@ -10,15 +10,15 @@ const {
 const debug = require('debug')('lemon-mart-server:user-model');
 
 const nameSchema = {
-  firstName: {
+  first: {
     type: String,
     required: [true, 'First Name is required'],
   },
-  middleName: {
+  middle: {
     type: String,
     default: '',
   },
-  lastName: {
+  last: {
     type: String,
     required: [true, 'Last Name is required'],
   },
@@ -70,8 +70,8 @@ const userSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Email address is invalid'],
     validate: {
       validator: async function (v) {
-        let users = await mongoose.model('User', userSchema).find({ email: v });
-        return users.length == 0;
+        let user = await mongoose.model('User', userSchema).findOne({ email: v });
+        if (this._id && this._id.toString() === user._id.toString()) return true;
       },
       message: (props) => 'Email address has been taken',
     },
@@ -107,10 +107,10 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.virtual('fullName').get(function () {
-  if (this.name.middleName && this.name.middleName != '') {
-    return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
+  if (this.name.middle && this.name.middle != '') {
+    return `${this.name.first} ${this.name.middle} ${this.name.last}`;
   }
-  return `${this.name.firstName} ${this.name.lastName}`;
+  return `${this.name.first} ${this.name.last}`;
 });
 
 userSchema
@@ -173,9 +173,9 @@ userSchema.statics.normalizeObject = function (object) {
   });
 
   let userData = {
-    'name.firstName': object['firstName'],
-    'name.middleName': object['middleName'],
-    'name.lastName': object['lastName'],
+    'name.first': object['firstName'],
+    'name.middle': object['middleName'],
+    'name.last': object['lastName'],
     'address.line1': object['address'],
     'address.line2': object['address'],
     'address.city': object['city'],
@@ -199,9 +199,9 @@ userSchema.statics.normalizedFilterParams = function (object) {
 };
 
 userSchema.statics.lookUpNested = {
-  firstName: 'name.firstName',
-  middleName: 'name.middleName',
-  lastName: 'name.lastName',
+  firstName: 'name.first',
+  middleName: 'name.middle',
+  lastName: 'name.last',
   address: 'address.line1',
   city: 'address.city',
   country: 'address.country',

@@ -34,8 +34,8 @@ describe('ErrorUtil::formatError', () => {
                 line1: 'Address line1 is required',
               },
               name: {
-                lastName: 'Last Name is required',
-                firstName: 'First Name is required',
+                last: 'Last Name is required',
+                first: 'First Name is required',
               },
               email: 'Email is required',
             },
@@ -47,7 +47,7 @@ describe('ErrorUtil::formatError', () => {
 
     describe('Case 2', () => {
       it(description, () => {
-        let user = new User({ name: { firstName: 'Blessed' } });
+        let user = new User({ name: { first: 'Blessed' } });
         let error = user.validateSync();
         let expectedResult = {
           error: {
@@ -61,7 +61,7 @@ describe('ErrorUtil::formatError', () => {
                 line1: 'Address line1 is required',
               },
               name: {
-                lastName: 'Last Name is required',
+                last: 'Last Name is required',
               },
               email: 'Email is required',
             },
@@ -74,7 +74,7 @@ describe('ErrorUtil::formatError', () => {
     describe('Case 3', () => {
       it(description, () => {
         let user = new User({
-          name: { firstName: 'Blessed', lastName: 'Sibanda' },
+          name: { first: 'Blessed', last: 'Sibanda' },
           email: 'wrong-email',
         });
         let error = user.validateSync();
@@ -100,7 +100,7 @@ describe('ErrorUtil::formatError', () => {
     describe('Case 4', () => {
       it(description, () => {
         let user = new User({
-          name: { firstName: 'Blessed', lastName: 'Sibanda' },
+          name: { first: 'Blessed', last: 'Sibanda' },
           email: 'blessed@example.com',
           password: '123',
           address: {

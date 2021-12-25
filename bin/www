@@ -9,7 +9,7 @@ var debug = require('debug')('lemon-mart-server:server');
 var http = require('http');
 var mongoose = require('mongoose');
 var config = require('../config');
-var { connectDb } = require('../src/utils/db.js');
+var { connectDb } = require('../src/models');
 
 /**
  * Connect to database

@@ -36,6 +36,8 @@ module.exports.updateUser = async (user, newData) => {
   delete newData.hashedPassword;
   delete newData.salt;
 
+  debug(JSON.stringify(newData));
+
   let updatedUser = merge(user, newData);
   return await updatedUser.save();
 };

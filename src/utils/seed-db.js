@@ -1,6 +1,6 @@
 const faker = require('faker');
 const User = require('../models/user.model');
-const { connectDb } = require('./db');
+const { connectDb } = require('../models');
 const config = require('../../config');
 
 const generateUsers = (n) => {
@@ -26,9 +26,9 @@ const generateUsers = (n) => {
       email: faker.internet.email(),
       password: '1234pass',
       name: {
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        middleName: faker.name.middleName().toUpperCase(),
+        first: faker.name.firstName(),
+        last: faker.name.lastName(),
+        middle: faker.name.middleName().toUpperCase(),
       },
       address: {
         line1: faker.address.streetAddress(),

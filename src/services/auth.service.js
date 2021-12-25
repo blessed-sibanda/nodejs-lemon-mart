@@ -7,7 +7,6 @@ module.exports.login = async (email, password) => {
   let user = await User.findOne({ email });
   if (user && user.authenticate(password)) {
     const payload = {
-      _id: user._id,
       email: user.email,
       role: user.role,
       picture: user.picture,

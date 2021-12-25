@@ -16,8 +16,8 @@ describe('User', () => {
       email: 'blessed@example.com',
       password: '1234pass',
       name: {
-        firstName: 'Blessed',
-        lastName: 'Sibanda',
+        first: 'Blessed',
+        last: 'Sibanda',
       },
       address: {
         line1: '123 Main Street',
@@ -48,7 +48,7 @@ describe('User', () => {
 
   it('has a fullName', () => {
     expect(user.fullName).to.eq('Blessed Sibanda');
-    userData.name.middleName = 'Bladed';
+    userData.name.middle = 'Bladed';
     const user2 = new User(userData);
     expect(user2.fullName).to.eq('Blessed Bladed Sibanda');
   });
@@ -119,19 +119,19 @@ describe('User', () => {
 
   describe('Name', () => {
     it('is invalid if firstName is missing', () => {
-      delete userData.name.firstName;
+      delete userData.name.first;
       const user2 = new User(userData);
       let error = user2.validateSync();
       expect(error).to.exist;
-      expect(error.errors['name.firstName'].message).to.eq('First Name is required');
+      expect(error.errors['name.first'].message).to.eq('First Name is required');
     });
 
     it('is invalid if lastName is missing', () => {
-      delete userData.name.lastName;
+      delete userData.name.last;
       const user2 = new User(userData);
       let error = user2.validateSync();
       expect(error).to.exist;
-      expect(error.errors['name.lastName'].message).to.eq('Last Name is required');
+      expect(error.errors['name.last'].message).to.eq('Last Name is required');
     });
   });
 
@@ -245,8 +245,8 @@ describe('User', () => {
       };
       let expected = {
         email: queryParams['email'],
-        'name.firstName': queryParams['firstName'],
-        'name.lastName': queryParams['lastName'],
+        'name.first': queryParams['firstName'],
+        'name.last': queryParams['lastName'],
         'address.line1': queryParams['address'],
         'address.line2': queryParams['address'],
         'address.city': queryParams['city'],
@@ -275,7 +275,7 @@ describe('User', () => {
         email: 'gmail',
       };
       let expected = {
-        'name.firstName': { $regex: 'Bl', $options: 'i' },
+        'name.first': { $regex: 'Bl', $options: 'i' },
         role: { $regex: 'clerk', $options: 'i' },
         email: { $regex: 'gmail', $options: 'i' },
       };
@@ -301,8 +301,8 @@ describe('User', () => {
       let sortKey = 'email,middleName,-lastName,-role,city';
       let expected = [
         ['email', 1],
-        ['name.middleName', 1],
-        ['name.lastName', -1],
+        ['name.middle', 1],
+        ['name.last', -1],
         ['role', -1],
         ['address.city', 1],
       ];

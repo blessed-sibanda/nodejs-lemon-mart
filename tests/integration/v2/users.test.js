@@ -1,10 +1,10 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../../../app');
-const { connectDb, generateUsers } = require('../../../src/utils');
+const { generateUsers } = require('../../../src/utils');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const config = require('../../../config');
-const { User } = require('../../../src/models');
+const { User, connectDb } = require('../../../src/models');
 const jwt = require('jsonwebtoken');
 const expect = require('chai').expect;
 
@@ -88,7 +88,7 @@ describe('GET /users', () => {
       let data = res.body['data'];
       expect(meta['page']).to.eql(1);
       let docs = await User.find({
-        'name.firstName': { $regex: nameFilter, $options: 'i' },
+        'name.first': { $regex: nameFilter, $options: 'i' },
         email: { $regex: emailFilter, $options: 'i' },
       })
         .select('-hashedPassword -salt -__v')
@@ -110,7 +110,7 @@ describe('GET /users', () => {
           select: '-hashedPassword -salt -__v',
           limit: User.perPage,
           page: 1,
-          sort: [['name.lastName', 1]],
+          sort: [['name.last', 1]],
         },
       );
       let meta = res.body['meta'];
