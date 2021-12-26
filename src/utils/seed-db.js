@@ -1,7 +1,6 @@
 const faker = require('faker');
 const User = require('../models/user.model');
 const { connectDb } = require('../models');
-const config = require('../../config');
 
 const generateUsers = (n) => {
   let users = [];

@@ -147,15 +147,7 @@ userSchema.methods = {
   },
 };
 
-const nestedFields = [
-  'firstName',
-  'lastName',
-  'middleName',
-  'address',
-  'city',
-  'state',
-  'country',
-];
+const nestedFields = ['firstName', 'lastName', 'middleName'];
 
 const allowedFilterFields = [...nestedFields, 'email', 'role'];
 
@@ -176,11 +168,6 @@ userSchema.statics.normalizeObject = function (object) {
     'name.first': object['firstName'],
     'name.middle': object['middleName'],
     'name.last': object['lastName'],
-    'address.line1': object['address'],
-    'address.line2': object['address'],
-    'address.city': object['city'],
-    'address.country': object['country'],
-    'address.state': object['state'],
   };
 
   nestedFields.forEach((field) => delete object[field]);
@@ -202,10 +189,6 @@ userSchema.statics.lookUpNested = {
   firstName: 'name.first',
   middleName: 'name.middle',
   lastName: 'name.last',
-  address: 'address.line1',
-  city: 'address.city',
-  country: 'address.country',
-  state: 'address.state',
 };
 
 userSchema.statics.normalizedSortFields = function (sortKey = '') {
